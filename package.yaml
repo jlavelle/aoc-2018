@@ -28,6 +28,7 @@ dependencies:
 - recursion-schemes
 - foldl
 - criterion
+- unordered-containers
 
 library:
   source-dirs: src
