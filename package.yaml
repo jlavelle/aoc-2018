@@ -27,6 +27,7 @@ dependencies:
 - lens
 - recursion-schemes
 - foldl
+- criterion
 
 library:
   source-dirs: src

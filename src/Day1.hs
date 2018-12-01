@@ -10,6 +10,7 @@ import qualified Data.Set as Set
 import Data.Functor.Foldable (hylo)
 import Data.Either (either)
 import Data.Maybe (fromJust)
+import Data.Function (fix)
 
 solve1 :: [Int] -> Int
 solve1 = sum
@@ -23,14 +24,30 @@ solve2 xs = hylo (either id id) coalg (xs, 0, Set.singleton 0)
    where
     acc' = x + acc
 
+-- Denis Stoyanov's version using fix
+solve2fix :: [Int] -> Maybe Int
+solve2fix xs = fix (\r f a -> either id (r f) (f a)) coalg (xs, 0, Set.singleton 0)
+ where
+  coalg ([], _, _) = Left Nothing
+  coalg ((x:xs), acc, s) | Set.member acc' s = Left $ Just acc'
+                         | otherwise         = Right (xs, acc', Set.insert acc' s)
+   where
+    acc' = x + acc
+
 solve2' :: [Int] -> Int
 solve2' = fromJust . solve2 . cycle
+
+solve2fix' :: [Int] -> Int
+solve2fix' = fromJust . solve2fix . cycle
 
 parse :: Text -> Either String [Int]
 parse = traverse (fmap fst . T.signed T.decimal) . T.lines
 
 solveIO :: ([Int] -> Int) -> IO Int
-solveIO f = fmap (f . either error id . parse) (T.readFile "./inputs/Day1.txt")
+solveIO f = fmap f readInput
+
+readInput :: IO [Int]
+readInput = either error id . parse <$> T.readFile ("./inputs/Day1.txt")
 
 tests :: [Bool]
 tests =
