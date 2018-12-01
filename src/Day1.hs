@@ -15,7 +15,7 @@ solve1 :: [Int] -> Int
 solve1 = sum
 
 solve2 :: [Int] -> Maybe Int
-solve2 xs = hylo (either id id) coalg (cycle xs, 0, Set.singleton 0)
+solve2 xs = hylo (either id id) coalg (xs, 0, Set.singleton 0)
  where
   coalg ([], _, _) = Left Nothing
   coalg ((x:xs), acc, s) | Set.member acc' s = Left $ Just acc'
@@ -24,7 +24,7 @@ solve2 xs = hylo (either id id) coalg (cycle xs, 0, Set.singleton 0)
     acc' = x + acc
 
 solve2' :: [Int] -> Int
-solve2' = fromJust . solve2
+solve2' = fromJust . solve2 . cycle
 
 parse :: Text -> Either String [Int]
 parse = traverse (fmap fst . T.signed T.decimal) . T.lines
