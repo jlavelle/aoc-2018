@@ -33,7 +33,7 @@ solve1 = getSum . f . foldMap (bimap Sum Sum . has2Or3 . allOccurences)
   f (x, y) = x * y
 
 solve2 :: [String] -> Maybe String
-solve2 = safeHead . fmap (uncurry intersect) . filter p . paired
+solve2 = fmap (uncurry intersect) . safeHead . filter p . paired
  where
   p (x, y) = (==) 1 . length . snd . partition id $ zipWith (==) x y
 
