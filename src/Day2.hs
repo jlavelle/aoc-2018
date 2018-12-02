@@ -2,14 +2,17 @@
 
 module Day2 where
 
-import Data.Map (Map)
-import qualified Data.Map as M
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as M
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 import Data.Monoid (Sum(..))
 import Data.Bifunctor (bimap)
 import Data.Foldable (foldl')
+import Data.List (partition, intersect)
+
+import Util (paired, safeHead)
 
 allOccurences :: Text -> Map Char Int
 allOccurences = T.foldl' go mempty
@@ -29,10 +32,18 @@ solve1 = getSum . f . foldMap (bimap Sum Sum . has2Or3 . allOccurences)
  where
   f (x, y) = x * y
 
+solve2 :: [String] -> Maybe String
+solve2 = safeHead . fmap (uncurry intersect) . filter p . paired
+ where
+  p (x, y) = (==) 1 . length . snd . partition id $ zipWith (==) x y
+
+solve2' :: [Text] -> Maybe String
+solve2' = solve2 . fmap T.unpack
+
 tests :: [Bool]
 tests =
   [ solve1 ["abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"] == 12
   ]
 
-solveIO :: ([Text] -> Int) -> IO Int
+solveIO :: ([Text] -> b) -> IO b
 solveIO f = f . T.lines <$> T.readFile "./inputs/Day2.txt"
