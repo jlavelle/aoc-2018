@@ -17,22 +17,19 @@ solve1 = sum
 
 solve2 :: [Int] -> Maybe Int
 solve2 xs = hylo (either id id) coalg (xs, 0, Set.singleton 0)
- where
-  coalg ([], _, _) = Left Nothing
-  coalg ((x:xs), acc, s) | Set.member acc' s = Left $ Just acc'
-                         | otherwise         = Right (xs, acc', Set.insert acc' s)
-   where
-    acc' = x + acc
 
 -- Denis Stoyanov's version using fix
 solve2fix :: [Int] -> Maybe Int
 solve2fix xs = fix (\r f a -> either id (r f) (f a)) coalg (xs, 0, Set.singleton 0)
+
+type Acc =  ([Int], Int, Set.IntSet)
+
+coalg :: Acc -> Either (Maybe Int) Acc
+coalg ([], _, _) = Left Nothing
+coalg ((x:xs), acc, s) | Set.member acc' s = Left $ Just acc'
+                       | otherwise         = Right (xs, acc', Set.insert acc' s)
  where
-  coalg ([], _, _) = Left Nothing
-  coalg ((x:xs), acc, s) | Set.member acc' s = Left $ Just acc'
-                         | otherwise         = Right (xs, acc', Set.insert acc' s)
-   where
-    acc' = x + acc
+  acc' = x + acc
 
 solve2' :: [Int] -> Int
 solve2' = fromJust . solve2 . cycle
