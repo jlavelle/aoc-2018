@@ -6,8 +6,6 @@ import qualified Data.Text as T
 import qualified Data.Text.Read as T
 import qualified Data.Text.IO as T
 import Data.Text (Text)
-import Control.Lens (ala)
-import Data.Monoid (Sum(..))
 import qualified Data.IntSet as Set
 import Data.Functor.Foldable (hylo)
 import Data.Either (either)
