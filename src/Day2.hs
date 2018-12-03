@@ -46,4 +46,7 @@ tests =
   ]
 
 solveIO :: ([Text] -> b) -> IO b
-solveIO f = f . T.lines <$> T.readFile "./inputs/Day2.txt"
+solveIO f = f <$> readInput
+
+readInput :: IO [Text]
+readInput = T.lines <$> T.readFile "./inputs/Day2.txt"
