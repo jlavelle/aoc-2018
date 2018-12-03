@@ -1,9 +1,14 @@
+{-# LANGUAGE TupleSections #-}
+
 module Util where
 
-import Data.List (tails)
+import Data.Functor.Foldable (para, ListF(..))
 
 paired :: [a] -> [(a, a)]
-paired xs = foldMap zip (drop 1 $ tails xs) xs
+paired = para alg
+ where
+  alg Nil = []
+  alg (Cons x (xs, r)) = fmap (x,) xs <> r
 
 safeHead :: [a] -> Maybe a
 safeHead []    = Nothing
