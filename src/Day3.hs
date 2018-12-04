@@ -8,6 +8,9 @@ import Data.Text (Text)
 import qualified Data.Map as M
 import Data.Map (Map)
 import Control.Applicative (liftA2, liftA3, (<|>))
+import Data.Maybe (isJust)
+import Data.Foldable (traverse_)
+import Util (safeHead)
 
 data Rect = Rect
   { rectId :: Int
@@ -16,12 +19,24 @@ data Rect = Rect
   } deriving Show
 
 solve1 :: [Rect] -> Int
-solve1 = M.size . M.filter (> 1) . M.unionsWith (+) . fmap rectCovers
+solve1 = M.size . M.filter (> 1) . fabricWith (const 1) (+)
 
-rectCovers :: Rect -> Map (Int, Int) Int
-rectCovers (Rect _ (x, y) (w, h)) = M.fromList cov
+-- TODO: Needs to be optimized!
+solve2 :: [Rect] -> Maybe Int
+solve2 rs = fmap rectId . safeHead $ filter (flip containsRect fabric) rs
  where
-  cov = [ ((x', y'), 1) | x' <- [x..x + w - 1], y' <- [y..y + h - 1] ]
+  fabric = fmap head . M.filter ((==) 1 . length) $ fabricWith (pure . rectId) (<>) rs
+
+fabricWith :: (Rect -> a) -> (a -> a -> a) -> [Rect] -> Map (Int, Int) a
+fabricWith f g = M.unionsWith g . fmap h
+ where
+  h r = M.fromList . flip zip (repeat $ f r) $ rectCovers r
+
+containsRect :: Rect -> Map (Int, Int) a -> Bool
+containsRect r m = isJust $ traverse_ (flip M.lookup m) (rectCovers r)
+
+rectCovers :: Rect -> [(Int, Int)]
+rectCovers (Rect _ (x, y) (w, h)) = [(x', y') | x' <- [x..x + w - 1], y' <- [y..y + h - 1]]
 
 parseRect :: Parser Rect
 parseRect = liftA3 Rect parseId parseCoords parseArea <* (P.endOfLine <|> P.endOfInput)
