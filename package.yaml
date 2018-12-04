@@ -28,6 +28,7 @@ dependencies:
 - recursion-schemes
 - foldl
 - criterion
+- attoparsec
 - unordered-containers
 
 library:
