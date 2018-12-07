@@ -30,6 +30,7 @@ dependencies:
 - criterion
 - attoparsec
 - unordered-containers
+- time
 
 library:
   source-dirs: src
